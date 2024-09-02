@@ -12,3 +12,12 @@ datasources:
       tlsSkipVerify: true
     secureJsonData:
       token: $INFLUXDB_TOKEN
+  - name: InfluxDB QL
+    type: influxdb
+    access: proxy
+    url: $INFLUXDB_ADDRESS
+    jsonData:
+      dbName: otel
+      httpHeaderName1: 'Authorization'
+    secureJsonData:
+      httpHeaderValue1: 'Token $INFLUXDB_TOKEN'
