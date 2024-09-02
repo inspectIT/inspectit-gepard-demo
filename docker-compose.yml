@@ -1,0 +1,321 @@
+x-java-entrypoint: &java_entrypoint
+  - "java"
+  - "-javaagent:/agent/inspectit-gepard-agent.jar"
+  - "-Dinspectit.config.http.url=${INSPECTIT_GEPARD_CONFIGSERVER_ADDRESS}"
+  - "org.springframework.boot.loader.launch.JarLauncher"
+
+x-java-soap-entrypoint: &java_soap_entrypoint
+  - "sh"
+  - "-c"
+  - |
+    java \
+    -javaagent:/agent/inspectit-gepard-agent.jar \
+    -Dinspectit.config.http.url=${INSPECTIT_GEPARD_CONFIGSERVER_ADDRESS} \
+    -jar /app.jar
+
+services:
+  # PetClinic
+  config-server:
+    image: ${PETCLINIC_IMAGE}-config-server:${PETCLINIC_VERSION}
+    container_name: config-server
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-I", "http://config-server:8888"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    ports:
+      - 8888:8888
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=petclinic-config-server
+  discovery-server:
+    image: ${PETCLINIC_IMAGE}-discovery-server:${PETCLINIC_VERSION}
+    container_name: discovery-server
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://discovery-server:8761"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      config-server:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    ports:
+      - 8761:8761
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=discovery-service
+
+  customers-service:
+    image: ${PETCLINIC_IMAGE}-customers-service:${PETCLINIC_VERSION}
+    container_name: customers-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    ports:
+      - 8081:8081
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=customer-service
+
+  visits-service:
+    image: inspectit/spring-petclinic-visits-service:${PETCLINIC_VERSION}
+    container_name: visits-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    ports:
+      - 8082:8082
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=visits-service
+
+  vets-service:
+    image: ${PETCLINIC_IMAGE}-vets-service:${PETCLINIC_VERSION}
+    container_name: vets-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    ports:
+      - 8083:8083
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=vets-service
+
+  soap-service:
+    image: ${PETCLINIC_IMAGE}-soap-service:${PETCLINIC_VERSION}
+    container_name: soap-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_soap_entrypoint
+    ports:
+      - 8877:8877
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=soap-service
+
+  soap-client:
+    image: ${PETCLINIC_IMAGE}-soap-client:${PETCLINIC_VERSION}
+    container_name: soap-client
+    ports:
+      - 7777:7777
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  api-gateway:
+    image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
+    container_name: api-gateway
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+
+  admin-server:
+    image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
+    container_name: admin-server
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - 9090:9090
+
+  # InspectIT
+  agent:
+    image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_VERSION}
+    container_name: inspectit-gepard-agent
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    depends_on:
+      inspectit-configserver:
+        condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+
+  inspectit-configserver:
+    image: ${INSPECTIT_GEPARD_CONFIGSERVER_IMAGE}:${INSPECTIT_GEPARD_VERSION}
+    container_name: ${INSPECTIT_GEPARD_CONFIGSERVER_HOST}
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    ports:
+      - 8099:8080
+      - 8091:9090
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "--Insecure",
+          "http://inspectit-configserver:9090/actuator/swagger-ui",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Collector
+  otelcol:
+    image: ${COLLECTOR_CONTRIB_IMAGE}
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
+    user: 0:0
+    volumes:
+      - ${HOST_FILESYSTEM}:/hostfs:ro
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+    ports:
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+      - "${OTEL_COLLECTOR_PORT_HTTP}"
+    depends_on:
+      - jaeger
+    environment:
+      - ENVOY_PORT
+      - HOST_FILESYSTEM
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      - INFLUXDB_TOKEN
+      - INFLUXDB_ORG
+      - INFLUXDB_BUCKET
+      - INFLUXDB_ADDRESS
+
+  #  logging: *logging
+
+  jaeger:
+    image: ${JAEGERTRACING_IMAGE}
+    container_name: jaeger
+    command:
+      - "--memory.max-traces=5000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+    restart: unless-stopped
+    ports:
+      - "${JAEGER_SERVICE_PORT}" # Jaeger UI
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+    environment:
+      - METRICS_STORAGE_TYPE=prometheus
+  #  logging: *logging
+
+  influxdb:
+    image: ${INFLUXDB_IMAGE}
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USER}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+
+  grafana:
+    image: ${GRAFANA_IMAGE}
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./src/grafana/provisioning/influxdb:/usr/share/grafana/custom/
+    environment:
+      - GF_PATHS_PROVISIONING=/usr/share/grafana/custom/
+      - INFLUXDB_TOKEN
+      - INFLUXDB_ORG
+      - INFLUXDB_BUCKET
+      - INFLUXDB_ADDRESS
+
+volumes:
+  agent-vol:
+  influxdb:
+  grafana-storage:
