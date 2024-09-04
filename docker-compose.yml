@@ -4,15 +4,6 @@ x-java-entrypoint: &java_entrypoint
   - "-Dinspectit.config.http.url=${INSPECTIT_GEPARD_CONFIGSERVER_ADDRESS}"
   - "org.springframework.boot.loader.launch.JarLauncher"
 
-x-java-soap-entrypoint: &java_soap_entrypoint
-  - "sh"
-  - "-c"
-  - |
-    java \
-    -javaagent:/agent/inspectit-gepard-agent.jar \
-    -Dinspectit.config.http.url=${INSPECTIT_GEPARD_CONFIGSERVER_ADDRESS} \
-    -jar /app.jar
-
 services:
   # PetClinic
   config-server:
@@ -121,48 +112,6 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_SERVICE_NAME=vets-service
-
-  soap-service:
-    image: ${PETCLINIC_IMAGE}-soap-service:${PETCLINIC_VERSION}
-    container_name: soap-service
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    depends_on:
-      config-server:
-        condition: service_healthy
-      discovery-server:
-        condition: service_healthy
-    volumes:
-      - agent-vol:/agent
-    entrypoint: *java_soap_entrypoint
-    ports:
-      - 8877:8877
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_SERVICE_NAME=soap-service
-
-  soap-client:
-    image: ${PETCLINIC_IMAGE}-soap-client:${PETCLINIC_VERSION}
-    container_name: soap-client
-    ports:
-      - 7777:7777
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    depends_on:
-      config-server:
-        condition: service_healthy
-      discovery-server:
-        condition: service_healthy
-    volumes:
-      - agent-vol:/agent
-    entrypoint: *java_soap_entrypoint
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_SERVICE_NAME=soap-client
 
   api-gateway:
     image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
