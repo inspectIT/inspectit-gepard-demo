@@ -34,7 +34,7 @@ services:
       - 8888:8888
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_SERVICE_NAME=petclinic-config-server
+      - OTEL_SERVICE_NAME=config-server
   discovery-server:
     image: ${PETCLINIC_IMAGE}-discovery-server:${PETCLINIC_VERSION}
     container_name: discovery-server
@@ -157,6 +157,12 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_soap_entrypoint
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=soap-client
 
   api-gateway:
     image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
@@ -172,6 +178,12 @@ services:
         condition: service_healthy
     ports:
       - 8080:8080
+    volumes:
+      - agent-vol:/agent
+    entrypoint: *java_entrypoint
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_SERVICE_NAME=api-gateway
 
   admin-server:
     image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
@@ -314,6 +326,39 @@ services:
       - INFLUXDB_ORG
       - INFLUXDB_BUCKET
       - INFLUXDB_ADDRESS
+
+  # Load Generator
+  loadgenerator:
+    image: ${LOAD_GENERATOR_IMAGE_NAME}:${LOAD_GENERATOR_IMAGE_VERSION}
+    container_name: load-generator
+    build:
+      context: ./
+      dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
+      cache_from:
+        - ${LOAD_GENERATOR_IMAGE_NAME}:${LOAD_GENERATOR_IMAGE_VERSION}
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    ports:
+      - ${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}
+    environment:
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST=${PETCLINIC_GATEWAY}
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=loadgenerator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - LOCUST_WEB_HOST=0.0.0.0
+    depends_on:
+      api-gateway:
+        condition: service_started
 
 volumes:
   agent-vol:
