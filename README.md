@@ -33,3 +33,4 @@ The components of the demo are accessible via the following URLs:
 - **Grafana**: [http://localhost:3000](http://localhost:3000) (username: `admin`, password: `admin`)
 - **Jaeger**: [http://localhost:16686](http://localhost:16686)
 - **InfluxDB**: [http://localhost:8086](http://localhost:8086) (username: `novatec`, password:`password`)
+- **Locust UI**: [http://localhost:8089](http:localhost:8089)
