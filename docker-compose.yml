@@ -155,7 +155,7 @@ services:
 
   # InspectIT
   agent:
-    image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_VERSION}
+    image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_AGENT_VERSION}
     container_name: inspectit-gepard-agent
     deploy:
       resources:
@@ -168,7 +168,7 @@ services:
       - agent-vol:/agent
 
   inspectit-configserver:
-    image: ${INSPECTIT_GEPARD_CONFIGSERVER_IMAGE}:${INSPECTIT_GEPARD_VERSION}
+    image: ${INSPECTIT_GEPARD_CONFIGSERVER_IMAGE}:${INSPECTIT_GEPARD_CONFIGSERVER_VERSION}
     container_name: ${INSPECTIT_GEPARD_CONFIGSERVER_HOST}
     deploy:
       resources:
