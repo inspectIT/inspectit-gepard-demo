@@ -20,7 +20,8 @@ docker-compose up
 
 This will start all the Docker containers required for the corresponding demo scenario, including the PetClinic demo application.
 
-You can access the demo application (PetClinic) under http://localhost:8080. Details on accessing monitoring infrastructure components are listed below.
+You can access the demo application (PetClinic) under http://localhost:8099. 
+Details on accessing monitoring infrastructure components are listed below.
 
 ## System Overview
 
@@ -29,8 +30,13 @@ The demo uses InfluxDB as a time series database to store metrics, Grafana for v
 
 The components of the demo are accessible via the following URLs:
 
-- **PetClinic Application**: [http://localhost:8080](http://localhost:8080)
+- **PetClinic Application**: [http://localhost:8099](http://localhost:8099)
 - **Grafana**: [http://localhost:3000](http://localhost:3000) (username: `admin`, password: `admin`)
 - **Jaeger**: [http://localhost:16686](http://localhost:16686)
 - **InfluxDB**: [http://localhost:8086](http://localhost:8086) (username: `novatec`, password:`password`)
 - **Locust UI**: [http://localhost:8089](http:localhost:8089)
+- **inspectIT Gepard Config-Server**: [http://localhost:8080](http://localhost:8080)
+  - Connections: `/api/v1/connections`
+  - Agent configuration: `/api/v1/agent-configuration`
+- **inspectIT Gepard Config-Server Spring Actuator**: [http://localhost:8091](http://localhost:8091)
+  - Swagger UI: `/actuator/swagger-ui/index.html`

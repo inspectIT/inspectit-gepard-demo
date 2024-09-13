@@ -88,11 +88,11 @@ exporters:
     tls:
       insecure: true
   influxdb:
-    endpoint: ${env:INFLUXDB_ADDRESS}   
+    endpoint: ${env:INFLUXDB_ADDRESS}
     org: ${env:INFLUXDB_ORG}
     bucket: ${env:INFLUXDB_BUCKET}
     token: ${env:INFLUXDB_TOKEN}
-    metrics_schema: telegraf-prometheus-v1
+    metrics_schema: otel-v1
 
 processors:
   batch:
@@ -105,7 +105,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug] 
+      exporters: [otlp, debug]
       #TODO: spanmetrics]
     metrics:
       receivers: [otlp]
