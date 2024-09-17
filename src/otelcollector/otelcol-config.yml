@@ -92,7 +92,7 @@ exporters:
     org: ${env:INFLUXDB_ORG}
     bucket: ${env:INFLUXDB_BUCKET}
     token: ${env:INFLUXDB_TOKEN}
-    metrics_schema: otel-v1
+    metrics_schema: telegraf-prometheus-v1
 
 processors:
   batch:
