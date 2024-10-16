@@ -2,6 +2,7 @@ x-java-entrypoint: &java_entrypoint
   - "java"
   - "-javaagent:/agent/inspectit-gepard-agent.jar"
   - "-Dinspectit.config.http.url=${INSPECTIT_GEPARD_CONFIGSERVER_ADDRESS}"
+  - "-Dlogging.level.root=${INSPECTIT_GEPARD_LOGLEVEL}"
   - "org.springframework.boot.loader.launch.JarLauncher"
 
 services:
