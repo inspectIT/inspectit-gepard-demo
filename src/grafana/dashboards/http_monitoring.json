@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 3,
   "links": [
     {
       "asDropdown": false,
@@ -429,6 +429,6 @@
   "timezone": "",
   "title": "HTTP Monitoring",
   "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703b8",
-  "version": 8,
+  "version": 3,
   "weekStart": ""
 }

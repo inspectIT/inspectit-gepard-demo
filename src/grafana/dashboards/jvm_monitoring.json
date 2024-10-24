@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 8,
+  "id": 4,
   "links": [
     {
       "asDropdown": false,
@@ -44,86 +44,69 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "default": false,
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
       "gridPos": {
-        "h": 8,
+        "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 69,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+      "id": 55,
+      "panels": [],
+      "repeat": "service_name",
+      "repeatDirection": "h",
+      "title": "$service_name",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "super-light-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "super-light-green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 53,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -131,27 +114,53 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_wait_time_milliseconds_sum[$__interval]) / rate(db_client_connections_wait_time_milliseconds_count[$__interval])",
+          "expr": "jvm_class_count{exported_job=\"$service_name\"}",
+          "hide": false,
           "instant": false,
-          "interval": "30s",
-          "legendFormat": "{{exported_job}}",
+          "legendFormat": "total classes of {{exported_job}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "jvm_class_loaded_total{exported_job=\"$service_name\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "loaded classes of {{exported_job}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "jvm_class_unloaded_total{exported_job=\"$service_name\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "unloaded classes of {{exported_job}}",
+          "range": true,
+          "refId": "C"
         }
       ],
-      "title": "DB Wait Time",
-      "type": "timeseries"
+      "title": "Java classes",
+      "type": "stat"
     },
     {
       "datasource": {
-        "default": false,
+        "default": true,
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-YlRd"
           },
           "custom": {
             "axisBorderShow": false,
@@ -199,18 +208,17 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "ms"
+          }
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 8
+        "w": 20,
+        "x": 4,
+        "y": 1
       },
-      "id": 70,
+      "id": 56,
       "options": {
         "legend": {
           "calcs": [],
@@ -230,22 +238,21 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
+          "expr": "avg_over_time(jvm_thread_count{exported_job=\"$service_name\"}[$__interval])",
           "instant": false,
-          "interval": "30s",
-          "legendFormat": "{{exported_job}}",
+          "legendFormat": "{{jvm_thread_state}} (deamon: {{jvm_thread_daemon}})",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "DB Create Time",
+      "title": "Thread states",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "default": false,
+        "default": true,
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -270,8 +277,11 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 8,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -282,10 +292,11 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "dashed+area"
             }
           },
           "mappings": [],
+          "max": 0.15,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -294,22 +305,26 @@
                 "value": null
               },
               {
+                "color": "#EAB839",
+                "value": 0.08
+              },
+              {
                 "color": "red",
-                "value": 80
+                "value": 0.12
               }
             ]
           },
-          "unit": "ms"
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 16
+        "w": 20,
+        "x": 4,
+        "y": 9
       },
-      "id": 68,
+      "id": 58,
       "options": {
         "legend": {
           "calcs": [],
@@ -322,6 +337,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.2.0",
       "targets": [
         {
           "datasource": {
@@ -329,23 +345,26 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
+          "expr": "rate(jvm_gc_duration_seconds_sum{exported_job=\"$service_name\"}[$__rate_interval]) / rate(jvm_gc_duration_seconds_count{exported_job=\"$service_name\"}[$__rate_interval])",
+          "format": "time_series",
+          "hide": false,
           "instant": false,
-          "interval": "30s",
-          "legendFormat": "{{exported_job}}",
+          "interval": "",
+          "legendFormat": "{{jvm_gc_action}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "DB Use Time",
+      "title": "Minor Garbage Collection Avg Duration",
       "type": "timeseries"
     }
   ],
   "refresh": "",
   "schemaVersion": 39,
   "tags": [
+    "JVM",
     "open-telemetry",
-    "database"
+    "Java"
   ],
   "templating": {
     "list": [
@@ -368,6 +387,38 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "definition": "label_values(exported_job)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Service",
+        "multi": true,
+        "name": "service_name",
+        "options": [],
+        "query": {
+          "qryType": 5,
+          "query": "label_values(exported_job)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -401,8 +452,8 @@
     ]
   },
   "timezone": "",
-  "title": "Database Monitoring",
-  "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703c1",
+  "title": "JVM Monitoring",
+  "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703b9",
   "version": 2,
   "weekStart": ""
 }

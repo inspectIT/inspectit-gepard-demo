@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [
     {
       "asDropdown": false,
@@ -44,19 +44,103 @@
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
+      "datasource": {
+        "default": false,
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 1,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 59,
-      "panels": [],
-      "repeat": "service_name",
-      "repeatDirection": "h",
-      "title": "$service_name",
-      "type": "row"
+      "id": 69,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "rate(db_client_connections_wait_time_milliseconds_sum[$__interval]) / rate(db_client_connections_wait_time_milliseconds_count[$__interval])",
+          "instant": false,
+          "interval": "30s",
+          "legendFormat": "{{exported_job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "DB Wait Time",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -116,171 +200,17 @@
               }
             ]
           },
-          "unit": "percentunit"
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 60,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "avg_over_time(jvm_cpu_recent_utilization_ratio{exported_job=\"$service_name\"}[$__interval])",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "legendFormat": "average",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Utilization",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "default": true,
-        "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "custom.fillBelowTo",
-                "value": "committed"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "C"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-blue",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 10
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 8
       },
-      "id": 62,
+      "id": 70,
       "options": {
         "legend": {
           "calcs": [],
@@ -300,48 +230,22 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_used_bytes{exported_job=\"$service_name\",jvm_memory_type=\"heap\"}[$__interval]))",
-          "hide": false,
+          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
           "instant": false,
-          "legendFormat": "used",
+          "interval": "30s",
+          "legendFormat": "{{exported_job}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_limit_bytes{exported_job=\"$service_name\", jvm_memory_type=\"heap\"}[$__interval]))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "limit",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_committed_bytes{exported_job=\"$service_name\", jvm_memory_type=\"heap\"}[$__interval]))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "committed",
-          "range": true,
-          "refId": "C"
         }
       ],
-      "title": "Heap Memory",
+      "title": "DB Create Time",
       "type": "timeseries"
     },
     {
       "datasource": {
-        "default": true,
+        "default": false,
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -395,71 +299,17 @@
               }
             ]
           },
-          "unit": "decbytes"
+          "unit": "ms"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-yellow",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillBelowTo",
-                "value": "committed"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "C"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-blue",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.fillOpacity",
-                "value": 20
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 16
       },
-      "id": 63,
+      "id": 68,
       "options": {
         "legend": {
           "calcs": [],
@@ -479,41 +329,15 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_used_bytes{exported_job=\"$service_name\",jvm_memory_type=\"non_heap\"}[$__interval]))",
-          "hide": false,
+          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
           "instant": false,
-          "legendFormat": "used",
+          "interval": "30s",
+          "legendFormat": "{{exported_job}}",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_limit_bytes{exported_job=\"$service_name\", jvm_memory_type=\"non_heap\"}[$__interval]))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "limit",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "sum(avg_over_time(jvm_memory_committed_bytes{exported_job=\"$service_name\", jvm_memory_type=\"non_heap\"}[$__interval]))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "committed",
-          "range": true,
-          "refId": "C"
         }
       ],
-      "title": "Non-Heap Memory",
+      "title": "DB Use Time",
       "type": "timeseries"
     }
   ],
@@ -521,8 +345,7 @@
   "schemaVersion": 39,
   "tags": [
     "open-telemetry",
-    "cpu",
-    "memory"
+    "database"
   ],
   "templating": {
     "list": [
@@ -545,38 +368,6 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
-      },
-      {
-        "current": {
-          "selected": true,
-          "text": [
-            "All"
-          ],
-          "value": [
-            "$__all"
-          ]
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "PBFA97CFB590B2093"
-        },
-        "definition": "label_values(exported_job)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Service",
-        "multi": true,
-        "name": "service_name",
-        "options": [],
-        "query": {
-          "qryType": 5,
-          "query": "label_values(exported_job)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
       }
     ]
   },
@@ -610,8 +401,8 @@
     ]
   },
   "timezone": "",
-  "title": "Infrastructure Monitoring",
-  "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703b7",
-  "version": 1,
+  "title": "Database Monitoring",
+  "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703c1",
+  "version": 3,
   "weekStart": ""
 }

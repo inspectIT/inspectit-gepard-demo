@@ -91,18 +91,18 @@ exporters:
 processors:
   batch:
 
-# connectors:
-#   spanmetrics:
+connectors:
+  spanmetrics:
+    namespace: span.metrics
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug]
-      #TODO: spanmetrics]
+      exporters: [otlp, spanmetrics, debug]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, spanmetrics]
       #receivers: [hostmetrics, docker_stats, httpcheck/frontendproxy, otlp, prometheus, redis, spanmetrics]
       processors: [batch]
       exporters: [influxdb, prometheus, debug]
