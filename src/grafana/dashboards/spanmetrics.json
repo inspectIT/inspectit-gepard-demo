@@ -18,10 +18,11 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
+  "id": 4,
   "links": [],
   "panels": [
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -124,7 +125,7 @@
           "editorMode": "code",
           "expr": "rate(span_metrics_calls_total{service_name=\"$servicename\", span_name=~\"$spanname\"}[$__rate_interval])",
           "instant": false,
-          "interval": "",
+          "interval": "30s",
           "legendFormat": "{{span_name}} - {{span_kind}} - {{status_code}}",
           "range": true,
           "refId": "A"
@@ -223,6 +224,7 @@
           "editorMode": "code",
           "expr": "avg(rate(span_metrics_duration_milliseconds_sum{service_name=\"$servicename\", span_name=~\"$spanname\"}[$__rate_interval])) / avg(rate(span_metrics_duration_milliseconds_count{service_name=\"$servicename\", span_name=~\"$spanname\"}[$__rate_interval]))",
           "instant": false,
+          "interval": "1m",
           "legendFormat": "average",
           "range": true,
           "refId": "A"
@@ -313,6 +315,6 @@
   "timezone": "browser",
   "title": "SpanMetrics",
   "uid": "fe1uzt5tc3v28f",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

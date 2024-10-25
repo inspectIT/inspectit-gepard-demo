@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 8,
   "links": [
     {
       "asDropdown": false,
@@ -131,7 +131,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_wait_time_milliseconds_sum[$__interval]) / rate(db_client_connections_wait_time_milliseconds_count[$__interval])",
+          "expr": "rate(db_client_connections_wait_time_milliseconds_sum[$__rate_interval]) / rate(db_client_connections_wait_time_milliseconds_count[$__rate_interval])",
           "instant": false,
           "interval": "30s",
           "legendFormat": "{{exported_job}}",
@@ -230,7 +230,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
+          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__rate_interval]) / rate(db_client_connections_use_time_milliseconds_count[$__rate_interval])",
           "instant": false,
           "interval": "30s",
           "legendFormat": "{{exported_job}}",
@@ -329,7 +329,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__interval]) / rate(db_client_connections_use_time_milliseconds_count[$__interval])",
+          "expr": "rate(db_client_connections_use_time_milliseconds_sum[$__rate_interval]) / rate(db_client_connections_use_time_milliseconds_count[$__rate_interval])",
           "instant": false,
           "interval": "30s",
           "legendFormat": "{{exported_job}}",

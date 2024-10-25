@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [
     {
       "asDropdown": false,
@@ -93,7 +93,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -149,7 +149,7 @@
           "expr": "avg_over_time(jvm_cpu_recent_utilization_ratio{exported_job=\"$service_name\"}[$__interval])",
           "hide": false,
           "instant": false,
-          "interval": "",
+          "interval": "1m",
           "legendFormat": "average",
           "range": true,
           "refId": "A"
@@ -193,7 +193,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -303,6 +303,7 @@
           "expr": "sum(avg_over_time(jvm_memory_used_bytes{exported_job=\"$service_name\",jvm_memory_type=\"heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "used",
           "range": true,
           "refId": "A"
@@ -316,6 +317,7 @@
           "expr": "sum(avg_over_time(jvm_memory_limit_bytes{exported_job=\"$service_name\", jvm_memory_type=\"heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "limit",
           "range": true,
           "refId": "B"
@@ -329,6 +331,7 @@
           "expr": "sum(avg_over_time(jvm_memory_committed_bytes{exported_job=\"$service_name\", jvm_memory_type=\"heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "committed",
           "range": true,
           "refId": "C"
@@ -372,7 +375,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -482,6 +485,7 @@
           "expr": "sum(avg_over_time(jvm_memory_used_bytes{exported_job=\"$service_name\",jvm_memory_type=\"non_heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "used",
           "range": true,
           "refId": "A"
@@ -495,6 +499,7 @@
           "expr": "sum(avg_over_time(jvm_memory_limit_bytes{exported_job=\"$service_name\", jvm_memory_type=\"non_heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "limit",
           "range": true,
           "refId": "B"
@@ -508,6 +513,7 @@
           "expr": "sum(avg_over_time(jvm_memory_committed_bytes{exported_job=\"$service_name\", jvm_memory_type=\"non_heap\"}[$__interval]))",
           "hide": false,
           "instant": false,
+          "interval": "1m",
           "legendFormat": "committed",
           "range": true,
           "refId": "C"

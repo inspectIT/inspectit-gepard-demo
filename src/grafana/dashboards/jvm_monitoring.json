@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 3,
   "links": [
     {
       "asDropdown": false,
@@ -117,7 +117,7 @@
           "expr": "jvm_class_count{exported_job=\"$service_name\"}",
           "hide": false,
           "instant": false,
-          "legendFormat": "total classes of {{exported_job}}",
+          "legendFormat": "current classes of {{exported_job}}",
           "range": true,
           "refId": "A"
         },
@@ -186,7 +186,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -240,6 +240,7 @@
           "editorMode": "code",
           "expr": "avg_over_time(jvm_thread_count{exported_job=\"$service_name\"}[$__interval])",
           "instant": false,
+          "interval": "1m",
           "legendFormat": "{{jvm_thread_state}} (deamon: {{jvm_thread_daemon}})",
           "range": true,
           "refId": "A"
@@ -349,7 +350,7 @@
           "format": "time_series",
           "hide": false,
           "instant": false,
-          "interval": "",
+          "interval": "4m",
           "legendFormat": "{{jvm_gc_action}}",
           "range": true,
           "refId": "A"
