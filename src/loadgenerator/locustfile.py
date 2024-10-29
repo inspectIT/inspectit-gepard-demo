@@ -3,13 +3,9 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
-import json
-import os
 import random
-import uuid
-import logging
-
+import requests
+import time
 from locust import FastHttpUser, task, constant
 
 class PetClinicUser(FastHttpUser):
@@ -17,6 +13,21 @@ class PetClinicUser(FastHttpUser):
     # Make each user wait 5 seconds after it executed its task
     # before picking up another one
     wait_time = constant(5)
+
+    def wait_for_services(self):
+        # Check health endpoints of each service
+        for service, port in [('customers', 8081), ('visits', 8082), ('vets', 8083)]:
+            url = f"http://{service}-service:{port}/actuator/health"
+            try:
+                response = self.client.get(url)
+                response.raise_for_status()
+            except requests.exceptions.RequestException:
+                print(f"Waiting for {service} service to become healthy...")
+                time.sleep(5)
+                self.wait_for_services()
+                return
+
+
     # viewOwner task is 2x more likley to be picked up by a user than editPetType
     @task(2)
     def viewOwner(self): 
@@ -44,6 +55,20 @@ class PetClinicUser(FastHttpUser):
             name="api/customer/owners/{ownerId}/pets/{petId}"
             )
         self.client.get("/api/customer/owners")
+    
+    @task(1)
+    def createSlowPet(self):
+        self.client.post(f"/api/customer/owners/1/pets", 
+            json={"id": 0, "name": "Johnny", "birthDate": "2000-05-25T22:00:00.000Z", "typeId": "6"},
+            name="Create Slow Pet (Hamster) /api/customer/owners/1/pets"
+            )
+    @task(1)
+    def createExceptionPet(self):
+        self.client.post(f"/api/customer/owners/1/pets", 
+            json={"id": 0, "name": "Tassilo", "birthDate": "2000-05-25T22:00:00.000Z", "typeId": "5"},
+            name="Create Exception Pet (Bird) /api/customer/owners/1/pets"
+            )    
+
 
 
 

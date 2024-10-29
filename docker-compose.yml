@@ -64,6 +64,12 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://customers-service:8081/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     volumes:
       - agent-vol:/agent
     entrypoint: *java_entrypoint
@@ -84,6 +90,11 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://visits-service:8082/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     volumes:
       - agent-vol:/agent
     entrypoint: *java_entrypoint
@@ -104,6 +115,11 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://vets-service:8083/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     volumes:
       - agent-vol:/agent
     entrypoint: *java_entrypoint
@@ -132,6 +148,11 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_SERVICE_NAME=api-gateway
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://api-gateway:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   admin-server:
     image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
@@ -225,9 +246,6 @@ services:
     command:
       - "--memory.max-traces=5000"
       - "--query.base-path=/jaeger/ui"
-      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
-      - "--prometheus.query.normalize-calls=true"
-      - "--prometheus.query.normalize-duration=true"
     deploy:
       resources:
         limits:
@@ -236,8 +254,6 @@ services:
     ports:
       - "${JAEGER_SERVICE_PORT}:${JAEGER_SERVICE_PORT}" # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
-    environment:
-      - METRICS_STORAGE_TYPE=prometheus
   #  logging: *logging
 
   influxdb:
@@ -317,7 +333,13 @@ services:
       - LOCUST_WEB_HOST=0.0.0.0
     depends_on:
       api-gateway:
-        condition: service_started
+        condition: service_healthy
+      customers-service:
+        condition: service_healthy
+      visits-service:
+        condition: service_healthy
+      vets-service:
+        condition: service_healthy
 
 volumes:
   agent-vol:
