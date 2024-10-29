@@ -151,7 +151,7 @@ services:
       - OTEL_SERVICE_NAME=api-gateway
     healthcheck:
       test: ["CMD", "curl", "-f", "http://api-gateway:8080/actuator/health"]
-      interval: 10s
+      interval: 20s
       timeout: 5s
       retries: 10
 
