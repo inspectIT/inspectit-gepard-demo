@@ -72,14 +72,6 @@ receivers:
         mute_process_exe_error: true
         mute_process_io_error: true
         mute_process_user_error: true
-  # Collector metrics
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: 'otelcol'
-          scrape_interval: 10s
-          static_configs:
-            - targets: ['0.0.0.0:8888']
 
 exporters:
   debug:
@@ -93,25 +85,27 @@ exporters:
     bucket: ${env:INFLUXDB_BUCKET}
     token: ${env:INFLUXDB_TOKEN}
     metrics_schema: telegraf-prometheus-v1
+  prometheus:
+    endpoint: "0.0.0.0:8889"
 
 processors:
   batch:
 
-# connectors:
-#   spanmetrics:
+connectors:
+  spanmetrics:
+    namespace: span.metrics
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug]
-      #TODO: spanmetrics]
+      exporters: [otlp, spanmetrics, debug]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, spanmetrics]
       #receivers: [hostmetrics, docker_stats, httpcheck/frontendproxy, otlp, prometheus, redis, spanmetrics]
       processors: [batch]
-      exporters: [influxdb, debug]
+      exporters: [influxdb, prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [batch]

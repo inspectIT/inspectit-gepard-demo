@@ -9,7 +9,6 @@ services:
   # PetClinic
   config-server:
     image: ${PETCLINIC_IMAGE}-config-server:${PETCLINIC_VERSION}
-    container_name: config-server
     deploy:
       resources:
         limits:
@@ -33,7 +32,6 @@ services:
 
   discovery-server:
     image: ${PETCLINIC_IMAGE}-discovery-server:${PETCLINIC_VERSION}
-    container_name: discovery-server
     deploy:
       resources:
         limits:
@@ -57,7 +55,6 @@ services:
 
   customers-service:
     image: ${PETCLINIC_IMAGE}-customers-service:${PETCLINIC_VERSION}
-    container_name: customers-service
     deploy:
       resources:
         limits:
@@ -78,7 +75,6 @@ services:
 
   visits-service:
     image: inspectit/spring-petclinic-visits-service:${PETCLINIC_VERSION}
-    container_name: visits-service
     deploy:
       resources:
         limits:
@@ -99,7 +95,6 @@ services:
 
   vets-service:
     image: ${PETCLINIC_IMAGE}-vets-service:${PETCLINIC_VERSION}
-    container_name: vets-service
     deploy:
       resources:
         limits:
@@ -120,7 +115,6 @@ services:
 
   api-gateway:
     image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
-    container_name: api-gateway
     deploy:
       resources:
         limits:
@@ -141,7 +135,6 @@ services:
 
   admin-server:
     image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
-    container_name: admin-server
     deploy:
       resources:
         limits:
@@ -152,12 +145,11 @@ services:
       discovery-server:
         condition: service_healthy
     ports:
-      - 9090:9090
+      - 9000:9090
 
   # InspectIT
   agent:
     image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_AGENT_VERSION}
-    container_name: inspectit-gepard-agent
     deploy:
       resources:
         limits:
@@ -194,7 +186,6 @@ services:
   # Collector
   otelcol:
     image: ${COLLECTOR_CONTRIB_IMAGE}
-    container_name: otel-col
     deploy:
       resources:
         limits:
@@ -231,7 +222,6 @@ services:
 
   jaeger:
     image: ${JAEGERTRACING_IMAGE}
-    container_name: jaeger
     command:
       - "--memory.max-traces=5000"
       - "--query.base-path=/jaeger/ui"
@@ -252,7 +242,6 @@ services:
 
   influxdb:
     image: ${INFLUXDB_IMAGE}
-    container_name: influxdb
     ports:
       - "8086:8086"
     volumes:
@@ -265,15 +254,32 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
 
+  prometheus:
+    image: ${PROMETHEUS_IMAGE}
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./src/prometheus:/etc/prometheus
+
+  # TODO: We should check, how to get data from OTel collector to TimescaleDB (probably via telegraf)
+  timescaledb:
+    image: ${TIMESCALEDB_IMAGE}
+    environment:
+      POSTGRES_USER: inspectit
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: inspectit
+    ports:
+      - "5432:5432"
+
   grafana:
     image: ${GRAFANA_IMAGE}
-    container_name: grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ./src/grafana/provisioning/influxdb:/usr/share/grafana/custom/
+      - ./src/grafana/provisioning:/usr/share/grafana/custom/
+      - ./src/grafana/dashboards:/usr/share/grafana/public/dashboards
     environment:
       - GF_PATHS_PROVISIONING=/usr/share/grafana/custom/
       - INFLUXDB_TOKEN
@@ -284,7 +290,6 @@ services:
   # Load Generator
   loadgenerator:
     image: ${LOAD_GENERATOR_IMAGE_NAME}:${LOAD_GENERATOR_IMAGE_VERSION}
-    container_name: load-generator
     build:
       context: ./
       dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
