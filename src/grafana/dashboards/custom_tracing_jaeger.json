@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
+  "id": 3,
   "links": [],
   "panels": [
     {
@@ -149,7 +149,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "api-gateway",
@@ -410,7 +410,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "config-server",
@@ -671,7 +671,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "customer-service",
@@ -931,7 +931,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "discovery-service",
@@ -1190,7 +1190,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "vets-service",
@@ -1449,7 +1449,7 @@
             "type": "jaeger",
             "uid": "PC9A941E8F2E49454"
           },
-          "limit": 20,
+          "limit": 15,
           "queryType": "search",
           "refId": "A",
           "service": "visits-service",
@@ -1633,8 +1633,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Custom Tracing",
+  "title": "Custom Tracing (Jaeger)",
   "uid": "ae2brzoltiio0e",
-  "version": 39,
+  "version": 7,
   "weekStart": ""
 }
