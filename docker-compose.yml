@@ -278,7 +278,6 @@ services:
     volumes:
       - ./src/prometheus:/etc/prometheus
 
-  # TODO: We should check, how to get data from OTel collector to TimescaleDB (probably via telegraf)
   timescaledb:
     image: ${TIMESCALEDB_IMAGE}
     environment:
@@ -303,6 +302,27 @@ services:
       - INFLUXDB_ORG
       - INFLUXDB_BUCKET
       - INFLUXDB_ADDRESS
+
+  grafana-tempo:
+    image: ${GRAFANA_TEMPO_IMAGE}
+    restart: unless-stopped
+    command: [ "-config.file=/etc/tempo.yml" ]
+    ports:
+      - "3200:3200"
+    volumes:
+      - ./src/grafana/temFpo/tempo.yml:/etc/tempo.yml
+      - tempo-storage:/var/tempo
+    depends_on:
+      memcached:
+        condition: service_started
+
+  memcached:
+    image: memcached:1.6.29
+    ports:
+      - "11211:11211"
+    environment:
+      - MEMCACHED_MAX_MEMORY=64m
+      - MEMCACHED_THREADS=4
 
   # Load Generator
   loadgenerator:
@@ -346,3 +366,4 @@ volumes:
   agent-vol:
   influxdb:
   grafana-storage:
+  tempo-storage:
