@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 10,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -126,7 +126,7 @@
             }
           ],
           "limit": 100,
-          "query": "{name=~\"$span_name\" && span.code.function=\"$functions\"}",
+          "query": "{span.code.function=\"$functions\" && name=~\"$span_name\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "traces"
@@ -516,6 +516,7 @@
         "type": "query"
       },
       {
+        "allValue": ".*",
         "current": {
           "selected": true,
           "text": [
@@ -590,6 +591,6 @@
   "timezone": "browser",
   "title": "Custom Tracing (Tempo)",
   "uid": "fe2ezmw5o9la8d",
-  "version": 27,
+  "version": 6,
   "weekStart": ""
 }
