@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 4,
   "links": [
     {
       "asDropdown": false,
@@ -44,6 +44,7 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -148,7 +149,7 @@
           "refId": "C"
         }
       ],
-      "title": "Java classes",
+      "title": "Total Java Classes",
       "type": "stat"
     },
     {
