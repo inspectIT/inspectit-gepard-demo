@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 6,
+  "id": 3,
   "links": [
     {
       "asDropdown": false,
@@ -102,7 +102,7 @@
         "percentChangeColorMode": "same_as_value",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -121,14 +121,16 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(http_server_request_duration_seconds_count{exported_job=~\"$service_name\"}) + sum(http_client_request_duration_seconds_count{exported_job=~\"$service_name\"})",
+          "expr": "sum(increase(http_server_request_duration_seconds_count{exported_job=~\"$service_name\"}[$__rate_interval])) + sum(increase(http_client_request_duration_seconds_count{exported_job=~\"$service_name\"}[$__rate_interval]))",
           "instant": false,
+          "interval": "$__rate_interval",
           "legendFormat": "$service_name",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "Total HTTP Calls",
+      "transparent": true,
       "type": "stat"
     },
     {
@@ -141,9 +143,6 @@
         "defaults": {
           "color": {
             "mode": "thresholds"
-          },
-          "custom": {
-            "neutral": 0
           },
           "mappings": [],
           "max": 1,
@@ -184,7 +183,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "mean"
           ],
           "fields": "",
           "values": false
@@ -203,9 +202,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(http_client_request_duration_seconds_count{error_type=\"java.net.ConnectException\", exported_job=~\"$service_name\"}) / (sum(http_server_request_duration_seconds_count{exported_job=~\"$service_name\"}) + sum(http_client_request_duration_seconds_count{exported_job=~\"$service_name\"}))",
+          "expr": "(sum(increase(http_client_request_duration_seconds_count{error_type!=\"\", exported_job=~\"$service_name\"}[$__rate_interval])) +sum(increase(http_server_request_duration_seconds_count{error_type!=\"\", exported_job=~\"$service_name\"}[$__rate_interval])) )/ (sum(increase(http_server_request_duration_seconds_count{exported_job=~\"$service_name\"}[$__rate_interval])) + sum(increase(http_client_request_duration_seconds_count{exported_job=~\"$service_name\"}[$__rate_interval])))",
           "hide": false,
           "instant": false,
+          "interval": "$__rate_interval",
           "legendFormat": "$service_name",
           "range": true,
           "refId": "A"
@@ -215,12 +215,89 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "default": true,
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "dark-red",
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 11
+      },
+      "id": 125,
+      "maxPerRow": 12,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "same_as_value",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.2.0",
+      "repeat": "service_name",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(increase(http_server_request_duration_seconds_count{exported_job=~\"$service_name\", error_type!=\"\"}[$__rate_interval])) + sum(increase(http_client_request_duration_seconds_count{exported_job=~\"$service_name\", error_type!=\"\"}[$__rate_interval]))",
+          "instant": false,
+          "interval": "$__rate_interval",
+          "legendFormat": "$service_name",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total failed HTTP Calls",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 11
+        "y": 16
       },
       "id": 64,
       "panels": [],
@@ -295,14 +372,45 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
+              "id": "byRegexp",
+              "options": "/.*per min/"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "cpm"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed requests per min"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-red",
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Succsesfull requests per min"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
                   "mode": "fixed"
                 }
               }
@@ -314,7 +422,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 17
       },
       "id": 65,
       "options": {
@@ -341,7 +449,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(http_client_request_duration_seconds_sum{exported_job=\"$service_name\",http_response_status_code=~\"2.*\"}[$__rate_interval])) / avg(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\",http_response_status_code=~\"2.*\"}[$__rate_interval]))",
+          "expr": "avg(rate(http_client_request_duration_seconds_sum{exported_job=\"$service_name\",error_type=\"\"}[$__rate_interval])) / avg(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\",http_response_status_code=~\"2.*\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "interval": "1m",
@@ -355,13 +463,41 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(http_client_request_duration_seconds_sum{exported_job=\"$service_name\", error_type=\"java.net.ConnectException\"}[$__rate_interval])) / avg(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\", error_type=\"java.net.ConnectException\"}[$__rate_interval]))",
+          "expr": "avg(rate(http_client_request_duration_seconds_sum{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval])) / avg(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "interval": "1m",
           "legendFormat": "Failed requests",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\", error_type=\"\"}[$__rate_interval]))*60",
+          "hide": false,
+          "instant": false,
+          "interval": "1m",
+          "legendFormat": "Succsesfull requests per min",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(http_client_request_duration_seconds_count{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval]))*60",
+          "hide": false,
+          "instant": false,
+          "interval": "1m",
+          "legendFormat": "Failed requests per min",
+          "range": true,
+          "refId": "D"
         }
       ],
       "title": "HTTP Client Request Duration",
@@ -376,7 +512,6 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "dark-green",
             "mode": "palette-classic"
           },
           "custom": {
@@ -434,14 +569,45 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byFrameRefID",
-              "options": "B"
+              "id": "byRegexp",
+              "options": "/.*per min/"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "cpm"
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed requests per min"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-red",
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Succesfull requests per min"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
                   "mode": "fixed"
                 }
               }
@@ -453,9 +619,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 17
       },
-      "id": 66,
+      "id": 207,
       "options": {
         "legend": {
           "calcs": [
@@ -480,9 +646,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(http_server_request_duration_seconds_sum{exported_job=\"$service_name\", http_response_status_code=~\"2.*\"}[$__rate_interval])) / avg(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", http_response_status_code=~\"2.*\"}[$__rate_interval]))",
+          "expr": "avg(rate(http_server_request_duration_seconds_sum{exported_job=\"$service_name\", error_type=\"\"}[$__rate_interval])) / avg(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", error_type=\"\"}[$__rate_interval]))",
+          "hide": false,
           "instant": false,
-          "interval": "1m",
+          "interval": "$__rate_interval",
           "legendFormat": "Successful requests",
           "range": true,
           "refId": "A"
@@ -493,13 +660,41 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "avg(rate(http_server_request_duration_seconds_sum{exported_job=\"$service_name\", error_type=\"java.net.ConnectException\"}[$__rate_interval])) / avg(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", error_type=\"java.net.ConnectException\"}[$__rate_interval]))",
+          "expr": "avg(rate(http_server_request_duration_seconds_sum{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval])) / avg(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
-          "interval": "1m",
+          "interval": "$__rate_interval",
           "legendFormat": "Failed requests",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", error_type!=\"\"}[$__rate_interval]))*60",
+          "hide": false,
+          "instant": false,
+          "interval": "$__rate_interval",
+          "legendFormat": "Failed requests per min",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(http_server_request_duration_seconds_count{exported_job=\"$service_name\", error_type=\"\"}[$__rate_interval]))*60",
+          "hide": false,
+          "instant": false,
+          "interval": "$__rate_interval",
+          "legendFormat": "Succesfull requests per min",
+          "range": true,
+          "refId": "D"
         }
       ],
       "title": "HTTP Server Request Duration",
@@ -599,7 +794,7 @@
   },
   "timezone": "",
   "title": "HTTP Monitoring",
-  "uid": "b91844d7-121e-4d0a-93b8-a9c1a05703b8",
+  "uid": "be2d0a9v16igwf",
   "version": 3,
   "weekStart": ""
 }
