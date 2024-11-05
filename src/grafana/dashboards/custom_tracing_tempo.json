@@ -31,7 +31,7 @@
       },
       "id": 30,
       "panels": [],
-      "title": "Count of function calls",
+      "title": "Count of Pet Types",
       "type": "row"
     },
     {
@@ -66,7 +66,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 4,
+        "w": 4.8,
         "x": 0,
         "y": 1
       },
@@ -90,7 +90,7 @@
         "wideLayout": true
       },
       "pluginVersion": "11.2.0",
-      "repeat": "functions",
+      "repeat": "pet_type",
       "repeatDirection": "h",
       "targets": [
         {
@@ -125,14 +125,14 @@
               "valueType": "string"
             }
           ],
-          "limit": 100,
-          "query": "{span.code.function=\"$functions\" && name=~\"$span_name\"}",
+          "limit": 500,
+          "query": "{span.petType=\"$pet_type\" && name=~\"$span_name\"}",
           "queryType": "traceql",
           "refId": "A",
           "tableType": "traces"
         }
       ],
-      "title": "Count of $functions",
+      "title": "Count of $pet_type",
       "transformations": [
         {
           "id": "reduce",
@@ -456,7 +456,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "container.id",
           "value": "container.id"
         },
@@ -566,12 +566,12 @@
         "definition": "",
         "hide": 0,
         "includeAll": true,
-        "label": "Functions",
+        "label": "Pet Types",
         "multi": true,
-        "name": "functions",
+        "name": "pet_type",
         "options": [],
         "query": {
-          "label": "code.function",
+          "label": "petType",
           "refId": "TempoDatasourceVariableQueryEditor-VariableQuery",
           "type": 1
         },
@@ -591,6 +591,6 @@
   "timezone": "browser",
   "title": "Custom Tracing (Tempo)",
   "uid": "fe2ezmw5o9la8d",
-  "version": 6,
+  "version": 11,
   "weekStart": ""
 }
