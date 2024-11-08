@@ -10,6 +10,7 @@ services:
   # PetClinic
   config-server:
     image: ${PETCLINIC_IMAGE}-config-server:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -33,6 +34,7 @@ services:
 
   discovery-server:
     image: ${PETCLINIC_IMAGE}-discovery-server:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -56,6 +58,7 @@ services:
 
   customers-service:
     image: ${PETCLINIC_IMAGE}-customers-service:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -82,6 +85,7 @@ services:
 
   visits-service:
     image: inspectit/spring-petclinic-visits-service:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -107,6 +111,7 @@ services:
 
   vets-service:
     image: ${PETCLINIC_IMAGE}-vets-service:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -132,6 +137,7 @@ services:
 
   api-gateway:
     image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -157,6 +163,7 @@ services:
 
   admin-server:
     image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -172,6 +179,7 @@ services:
   # InspectIT
   agent:
     image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_AGENT_VERSION}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -185,6 +193,7 @@ services:
   inspectit-configserver:
     image: ${INSPECTIT_GEPARD_CONFIGSERVER_IMAGE}:${INSPECTIT_GEPARD_CONFIGSERVER_VERSION}
     container_name: ${INSPECTIT_GEPARD_CONFIGSERVER_HOST}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
@@ -208,11 +217,11 @@ services:
   # Collector
   otelcol:
     image: ${COLLECTOR_CONTRIB_IMAGE}
+    restart: unless-stopped
     deploy:
       resources:
         limits:
           memory: 200M
-    restart: unless-stopped
     command:
       [
         "--config=/etc/otelcol-config.yml",
@@ -244,6 +253,7 @@ services:
 
   jaeger:
     image: ${JAEGERTRACING_IMAGE}
+    restart: unless-stopped
     command:
       - "--memory.max-traces=5000"
       - "--query.base-path=/jaeger/ui"
@@ -251,7 +261,6 @@ services:
       resources:
         limits:
           memory: 400M
-    restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}:${JAEGER_SERVICE_PORT}" # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
@@ -259,6 +268,7 @@ services:
 
   influxdb:
     image: ${INFLUXDB_IMAGE}
+    restart: unless-stopped
     ports:
       - "8086:8086"
     volumes:
@@ -273,6 +283,7 @@ services:
 
   prometheus:
     image: ${PROMETHEUS_IMAGE}
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
@@ -280,6 +291,7 @@ services:
 
   timescaledb:
     image: ${TIMESCALEDB_IMAGE}
+    restart: unless-stopped
     environment:
       POSTGRES_USER: inspectit
       POSTGRES_PASSWORD: password
@@ -318,6 +330,7 @@ services:
 
   memcached:
     image: memcached:1.6.29
+    restart: unless-stopped
     ports:
       - "11211:11211"
     environment:
@@ -327,6 +340,7 @@ services:
   # Load Generator
   loadgenerator:
     image: ${LOAD_GENERATOR_IMAGE_NAME}:${LOAD_GENERATOR_IMAGE_VERSION}
+    restart: unless-stopped
     build:
       context: ./
       dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
@@ -336,7 +350,6 @@ services:
       resources:
         limits:
           memory: 1G
-    restart: unless-stopped
     ports:
       - ${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}
     environment:
