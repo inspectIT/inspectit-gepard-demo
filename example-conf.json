@@ -1,0 +1,25 @@
+{
+  "instrumentation": {
+    "rules": {
+      "r_test": {
+        "scopes": {
+          "s_owner": true,
+          "s_pet": true
+        },
+        "tracing": {
+          "startSpan": true
+        }
+      }
+    },
+    "scopes": {
+      "s_owner": {
+        "fqn": "org.springframework.samples.petclinic.customers.web.OwnerResource",
+        "methods": []
+      },
+      "s_pet": {
+        "fqn": "org.springframework.samples.petclinic.customers.web.PetResource",
+        "methods": []
+      }
+    }
+  }
+}
