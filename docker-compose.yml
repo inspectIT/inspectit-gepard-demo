@@ -9,6 +9,7 @@ services:
   # PetClinic
   config-server:
     image: ${PETCLINIC_IMAGE}-config-server:${PETCLINIC_VERSION}
+    container_name: config-server
     restart: unless-stopped
     deploy:
       resources:
@@ -35,6 +36,7 @@ services:
 
   discovery-server:
     image: ${PETCLINIC_IMAGE}-discovery-server:${PETCLINIC_VERSION}
+    container_name: discovery-server
     restart: unless-stopped
     deploy:
       resources:
@@ -61,6 +63,7 @@ services:
 
   customers-service:
     image: ${PETCLINIC_IMAGE}-customers-service:${PETCLINIC_VERSION}
+    container_name: customers-service
     restart: unless-stopped
     deploy:
       resources:
@@ -84,12 +87,13 @@ services:
       - 8081:8081
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_SERVICE_NAME=customer-service
+      - OTEL_SERVICE_NAME=customers-service
       - INSPECTIT_CONFIG_HTTP_ATTRIBUTES_APPLICATION=petclinic
       - INSPECTIT_CONFIG_HTTP_ATTRIBUTES_ROLE=business
 
   visits-service:
     image: inspectit/spring-petclinic-visits-service:${PETCLINIC_VERSION}
+    container_name: visits-service
     restart: unless-stopped
     deploy:
       resources:
@@ -118,6 +122,7 @@ services:
 
   vets-service:
     image: ${PETCLINIC_IMAGE}-vets-service:${PETCLINIC_VERSION}
+    container_name: vets-service
     restart: unless-stopped
     deploy:
       resources:
@@ -146,6 +151,7 @@ services:
 
   api-gateway:
     image: ${PETCLINIC_IMAGE}-api-gateway:${PETCLINIC_VERSION}
+    container_name: api-gateway
     restart: unless-stopped
     deploy:
       resources:
@@ -174,6 +180,7 @@ services:
 
   admin-server:
     image: ${PETCLINIC_IMAGE}-admin-server:${PETCLINIC_VERSION}
+    container_name: admin-server
     restart: unless-stopped
     deploy:
       resources:
@@ -190,6 +197,7 @@ services:
   # InspectIT
   agent:
     image: ${INSPECTIT_GEPARD_AGENT_IMAGE}:${INSPECTIT_GEPARD_AGENT_VERSION}
+    container_name: agent
     restart: unless-stopped
     deploy:
       resources:
@@ -228,6 +236,7 @@ services:
   # Collector
   otelcol:
     image: ${COLLECTOR_CONTRIB_IMAGE}
+    container_name: otelcol
     restart: unless-stopped
     deploy:
       resources:
@@ -264,6 +273,7 @@ services:
 
   jaeger:
     image: ${JAEGERTRACING_IMAGE}
+    container_name: jaeger
     restart: unless-stopped
     command:
       - "--memory.max-traces=5000"
@@ -278,6 +288,7 @@ services:
 
   influxdb:
     image: ${INFLUXDB_IMAGE}
+    container_name: influxdb
     restart: unless-stopped
     ports:
       - "8086:8086"
@@ -293,6 +304,7 @@ services:
 
   prometheus:
     image: ${PROMETHEUS_IMAGE}
+    container_name: prometheus
     restart: unless-stopped
     ports:
       - "9090:9090"
@@ -301,6 +313,7 @@ services:
 
   timescaledb:
     image: ${TIMESCALEDB_IMAGE}
+    container_name: timescaledb
     restart: unless-stopped
     environment:
       POSTGRES_USER: inspectit
@@ -311,6 +324,7 @@ services:
 
   grafana:
     image: ${GRAFANA_IMAGE}
+    container_name: grafana
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -327,6 +341,7 @@ services:
 
   grafana-tempo:
     image: ${GRAFANA_TEMPO_IMAGE}
+    container_name: grafana-tempo
     restart: unless-stopped
     command: [ "-config.file=/etc/tempo.yml" ]
     ports:
@@ -340,6 +355,7 @@ services:
 
   memcached:
     image: memcached:1.6.29
+    container_name: memcached
     restart: unless-stopped
     ports:
       - "11211:11211"
@@ -350,6 +366,7 @@ services:
   # Load Generator
   loadgenerator:
     image: ${LOAD_GENERATOR_IMAGE_NAME}:${LOAD_GENERATOR_IMAGE_VERSION}
+    container_name: loadgenerator
     restart: unless-stopped
     build:
       context: ./
