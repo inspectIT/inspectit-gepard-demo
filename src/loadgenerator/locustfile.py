@@ -9,7 +9,7 @@ import time
 from locust import FastHttpUser, task, constant
 
 class PetClinicUser(FastHttpUser):
-        
+
     # Make each user wait 5 seconds after it executed its task
     # before picking up another one
     wait_time = constant(5)
@@ -27,15 +27,15 @@ class PetClinicUser(FastHttpUser):
                 self.wait_for_services()
                 return
 
-
-    # viewOwner task is 2x more likley to be picked up by a user than editPetType
+    # viewOwner task is 2x more likely to be picked up by a user than editPetType
     @task(2)
-    def viewOwner(self): 
+    def viewOwner(self):
         self.client.get("/")
         self.client.get("/api/customer/owners")
         owner_id = random.randint(1, 10)
         self.client.get(f"/api/gateway/owners/{owner_id}", name="/api/gateway/owners/{ownerId}")
         self.client.get("/api/vet/vets")
+
     @task(1)
     def editPetType(self):
         self.client.get("/")
@@ -50,24 +50,36 @@ class PetClinicUser(FastHttpUser):
         petTypes = petTypeResponse.json()
         random_pet_type_id = random.choice(petTypes)["id"]
         self.client.put(
-            f"/api/customer/owners/{ owner_id }/pets/{ pet_id }", 
-            json={"birthDate": petBirthDate, "id": pet_id, "name": petName, "typeId": random_pet_type_id}, 
+            f"/api/customer/owners/{ owner_id }/pets/{ pet_id }",
+            json={"birthDate": petBirthDate, "id": pet_id, "name": petName, "typeId": random_pet_type_id},
             name="api/customer/owners/{ownerId}/pets/{petId}"
-            )
+        )
         self.client.get("/api/customer/owners")
-    
+
+    @task(1)
+    def createRandomPet(self):
+        pet_id = random.randint(1,5)
+        self.client.post(
+            f"/api/customer/owners/2/pets",
+            json={"id": 0, "name": "Thorsten", "birthDate": "2001-09-0314:00:00.000Z", "typeId": pet_id},
+            name="Create Random Pet /api/customer/owners/2/pets"
+        )
+
     @task(1)
     def createSlowPet(self):
-        self.client.post(f"/api/customer/owners/1/pets", 
+        self.client.post(
+            f"/api/customer/owners/1/pets",
             json={"id": 0, "name": "Johnny", "birthDate": "2000-05-25T22:00:00.000Z", "typeId": "6"},
             name="Create Slow Pet (Hamster) /api/customer/owners/1/pets"
-            )
+        )
+
     @task(1)
     def createExceptionPet(self):
-        self.client.post(f"/api/customer/owners/1/pets", 
+        self.client.post(
+            f"/api/customer/owners/1/pets",
             json={"id": 0, "name": "Tassilo", "birthDate": "2000-05-25T22:00:00.000Z", "typeId": "5"},
             name="Create Exception Pet (Bird) /api/customer/owners/1/pets"
-            )    
+        )
 
 
 
