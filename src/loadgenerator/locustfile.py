@@ -61,7 +61,7 @@ class PetClinicUser(FastHttpUser):
         pet_id = random.randint(1,5)
         self.client.post(
             f"/api/customer/owners/2/pets",
-            json={"id": 0, "name": "Horst", "birthDate": "2001-09-0314:00:00.000Z", "typeId": pet_id},
+            json={"id": 0, "name": "Thorsten", "birthDate": "2001-09-0314:00:00.000Z", "typeId": pet_id},
             name="Create Random Pet /api/customer/owners/2/pets"
         )
 
