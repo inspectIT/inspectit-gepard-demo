@@ -31,7 +31,7 @@ The demo uses InfluxDB as a time series database to store metrics, Grafana for v
 The components of the demo are accessible via the following URLs:
 
 - **PetClinic Application**: [http://localhost:8099](http://localhost:8099)
-- **Grafana**: [http://localhost:3000](http://localhost:3000) (username: `admin`, password: `admin`)
+- **Grafana**: [http://localhost:3000](http://localhost:3000) (username: `admin`, password: `demo`)
 - **Jaeger**: [http://localhost:16686](http://localhost:16686)
 - **InfluxDB**: [http://localhost:8086](http://localhost:8086) (username: `novatec`, password:`password`)
 - **Prometheus**: [http://localhost:9090](http://localhost:9090)
