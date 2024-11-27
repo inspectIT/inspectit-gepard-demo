@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 18812,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 8,
   "links": [
     {
       "asDropdown": false,
@@ -125,7 +125,7 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "Instrumented classes by InspectIT: 521d40b6-b939-4fad-8099-7365f5584fec"
+                  "Instrumented classes by InspectIT"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -173,7 +173,7 @@
           "expr": "inspectit_self_instrumented_classes{exported_job=\"$service_name\"}",
           "hide": false,
           "instant": false,
-          "interval": "1m",
+          "interval": "30s",
           "legendFormat": "Instrumented classes by InspectIT",
           "range": true,
           "refId": "A"
@@ -250,7 +250,7 @@
           "refId": "A"
         }
       ],
-      "title": "Percentage of instrumented Classes",
+      "title": "Percentage of instrumented classes",
       "type": "gauge"
     }
   ],
@@ -349,6 +349,6 @@
   "timezone": "",
   "title": "Self-Monitoring",
   "uid": "b91844d7-121e-4d0b-93b8-a9c1a05703b8",
-  "version": 10,
+  "version": 4,
   "weekStart": ""
 }
